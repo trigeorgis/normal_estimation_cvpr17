@@ -64,7 +64,7 @@ def train():
     g = tf.Graph()
     with g.as_default():
         # Load datasets.
-        provider = data_provider.MeinNormals256()
+        provider = data_provider.MeinNormals386()
         images, normals, mask = provider.get()
         
         # Define model graph.
@@ -89,7 +89,7 @@ def train():
 
         init_fn = None
         if FLAGS.pretrained_resnet_checkpoint_path:
-            init_fn = restore_resnet(sess, FLAGS.pretrained_resnet_checkpoint_path)
+            init_fn = restore_resnet(FLAGS.pretrained_resnet_checkpoint_path)
 
         if FLAGS.pretrained_model_checkpoint_path:
             print('Loading whole model...')

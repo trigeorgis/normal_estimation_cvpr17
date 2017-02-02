@@ -65,12 +65,12 @@ def caffe_preprocess(image):
 class Dataset:
     pass
 
-class MeinNormals256(Dataset):
-    def __init__(self, batch_size=16, is_training=False):
-        self.name = 'MeinNormal256x256'
+class MeinNormals386(Dataset):
+    def __init__(self, batch_size=8, is_training=False):
+        self.name = 'MeinNormal386x386'
         self.batch_size = batch_size
         self.root = Path('/vol/atlas/databases/tf_records/')
-        self.tfrecord_names = ['synthetic_normals_256x256.tfrecords']
+        self.tfrecord_names = ['synthetic_normals_386x386.tfrecords']
         self.is_training = is_training
         
     def get(self):
@@ -96,13 +96,15 @@ class MeinNormals256(Dataset):
         if self.is_training:
             image = distort_color(image / 255.) * 255.
         
-        image.set_shape((256, 256, 3))
+        height, width = 386, 386
+        
+        image.set_shape((height, width, 3))
         image = caffe_preprocess(image)
         
         normals = tf.decode_raw(features['normals'], tf.float32)
         
-        normals.set_shape((3 * 256 * 256))
-        normals = tf.reshape(normals, (256, 256, 3))
+        normals.set_shape((3 * width * height))
+        normals = tf.reshape(normals, (height, width, 3))
         
         mask = tf.to_float(tf.reduce_mean(normals, 2) >= -.5)[..., None]
         
