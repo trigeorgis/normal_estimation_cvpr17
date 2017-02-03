@@ -62,15 +62,12 @@ def caffe_preprocess(image):
     image = image - VGG_MEAN.reshape([1, 1, 3])
     return image
 
-class Dataset:
-    pass
 
-class MeinNormals386(Dataset):
-    def __init__(self, batch_size=8, is_training=False):
-        self.name = 'MeinNormal386x386'
+class Dataset:
+    def __init__(self, names, batch_size=8, is_training=False):
         self.batch_size = batch_size
         self.root = Path('/vol/atlas/databases/tf_records/')
-        self.tfrecord_names = ['synthetic_normals_386x386.tfrecords']
+        self.tfrecord_names = names
         self.is_training = is_training
         
     def get(self):
@@ -116,6 +113,21 @@ class MeinNormals386(Dataset):
             min_after_dequeue=200)
 
 
+class SyntheticNormals(Dataset):
+    def __init__(self, **kwargs):
+        names = ['synthetic_normals_386x386.tfrecords']
+        super().__init__(names, **kwargs)
+    
+    def num_samples(self):
+        return 14193 * 3
+
+class PhotofaceNormals(Dataset):
+    def __init__(self, **kwargs):
+        names = ['photoface_386x386.tfrecords']
+        super().__init__(names, **kwargs)
+
+    def num_samples(self):
+        return 3152
 
 class DatasetMixer():
     def __init__(self, names, densities=None, batch_size=1):

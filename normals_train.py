@@ -64,7 +64,7 @@ def train():
     g = tf.Graph()
     with g.as_default():
         # Load datasets.
-        provider = data_provider.MeinNormals386()
+        provider = data_provider.SyntheticNormals()
         images, normals, mask = provider.get()
         
         # Define model graph.
@@ -81,6 +81,9 @@ def train():
 
         total_loss = slim.losses.get_total_loss()
         tf.scalar_summary('losses/total loss', total_loss)
+        tf.image_summary('images', images)
+        tf.image_summary('normals', normals)
+        tf.image_summary('predictions', prediction)
 
         optimizer = tf.train.AdamOptimizer(FLAGS.initial_learning_rate)
 
