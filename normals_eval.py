@@ -14,7 +14,7 @@ tf.app.flags.DEFINE_integer('eval_interval_secs', 300, '''Run the evaluation eve
 
 def main():
     # Load the data
-    provider = data_provider.SyntheticNormals()
+    provider = data_provider.ICT3DNormals()
     images, normals, mask = provider.get()
 
     # Define the network

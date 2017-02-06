@@ -19,7 +19,7 @@ tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.97,
 tf.app.flags.DEFINE_integer('batch_size', 4, '''The batch size to use.''')
 tf.app.flags.DEFINE_integer('num_preprocess_threads', 4,
                             '''How many preprocess threads to use.''')
-tf.app.flags.DEFINE_string('train_dir', 'ckpt/train_normals_l1',
+tf.app.flags.DEFINE_string('train_dir', 'ckpt/train',
                            '''Directory where to write event logs '''
                            '''and checkpoint.''')
 tf.app.flags.DEFINE_string('pretrained_model_checkpoint_path', '',
@@ -64,7 +64,9 @@ def train():
     g = tf.Graph()
     with g.as_default():
         # Load datasets.
-        provider = data_provider.SyntheticNormals()
+        names = ['PhotofaceNormals', 'SyntheticNormals']
+        provider = data_provider.DatasetMixer(
+            names, batch_size=FLAGS.batch_size, densities=(10, 1))
         images, normals, mask = provider.get()
         
         # Define model graph.

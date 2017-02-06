@@ -91,6 +91,10 @@ class Dataset:
         image = tf.to_float(image)
         
         if self.is_training:
+            
+            result = tf.image.random_flip_left_right(tf.concat(2, [image, normals]))
+            image = result[:, :, :3]
+            normals = result[:, :, 3:]
             image = distort_color(image / 255.) * 255.
         
         height, width = 386, 386
@@ -129,6 +133,24 @@ class PhotofaceNormals(Dataset):
     def num_samples(self):
         return 3152
 
+class ICT3DNormals(Dataset):
+    def __init__(self, **kwargs):
+        names = ['ict_386x386.tfrecords']
+        super().__init__(names, **kwargs)
+
+    def num_samples(self):
+        return 3152
+
+    
+class TrainSet(Dataset):
+    def __init__(self, **kwargs):
+        names = ['synthetic_normals_386x386', 'photoface_386x386.tfrecords']
+        super().__init__(names, **kwargs)
+
+    def num_samples(self):
+        return 3152 + 14193 * 3
+
+
 class DatasetMixer():
     def __init__(self, names, densities=None, batch_size=1):
         self.providers = []
@@ -145,7 +167,7 @@ class DatasetMixer():
         queue = None
         enqueue_ops = []
         for p in self.providers:
-            tensors = p.get(create_batches=True, **kargs)
+            tensors = p.get(**kargs)
             
             shapes = [x.get_shape() for x in tensors]
 
